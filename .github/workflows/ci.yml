@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint & type check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install ruff mypy
+      - run: ruff check .
+      - run: mypy ingestion/ backend/ --ignore-missing-imports
+
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install all dependencies
+        run: pip install -e ".[ingestion,backend,frontend,dev]"
+      - name: Run unit tests
+        run: pytest tests/unit/ -v --tb=short --cov=ingestion --cov=backend --cov-report=xml
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.xml
+        continue-on-error: true
+
+  integration-tests:
+    name: Integration tests
+    runs-on: ubuntu-latest
+
+    services:
+      qdrant:
+        image: qdrant/qdrant:latest
+        ports:
+          - 6333:6333
+        options: >-
+          --health-cmd "curl -sf http://localhost:6333/healthz"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Restore HuggingFace model cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/hf_cache
+          key: hf-bge-large-en-v1.5-${{ runner.os }}
+      - name: Install all dependencies
+        run: pip install -e ".[ingestion,backend,dev]"
+      - name: Run integration tests
+        env:
+          QDRANT_URL: http://localhost:6333
+          HF_HOME: /tmp/hf_cache
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: pytest tests/integration/ -v --tb=short

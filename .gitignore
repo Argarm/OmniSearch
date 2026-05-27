@@ -1,0 +1,53 @@
+# Environment
+.env
+.env.local
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+
+# HuggingFace model cache
+.cache/
+hf_cache/
+
+# Qdrant local data
+qdrant_storage/
+
+# Data (local PDFs — large files)
+data/sources/*.pdf
+data/sources/*.PDF
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+docker-volumes/
+
+# Mypy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/

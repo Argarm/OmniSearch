@@ -1,0 +1,74 @@
+name: DocuStream Indexer
+
+on:
+  schedule:
+    - cron: '0 2 * * *'           # Nightly at 2AM UTC
+  push:
+    paths:
+      - 'data/sources/**'         # Trigger when PDFs are committed
+  workflow_dispatch:
+    inputs:
+      source_type:
+        description: 'Source to ingest (pdf | notion | confluence | all)'
+        required: false
+        default: 'all'
+
+jobs:
+  ingest:
+    name: Run ingestion pipeline
+    runs-on: ubuntu-latest
+
+    services:
+      qdrant:
+        image: qdrant/qdrant:latest
+        ports:
+          - 6333:6333
+        options: >-
+          --health-cmd "curl -sf http://localhost:6333/healthz"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Cache the HuggingFace model (~1.3GB for bge-large-en-v1.5)
+      # Without this cache, every run downloads the model fresh (+3-5min).
+      - name: Restore HuggingFace model cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/hf_cache
+          key: hf-bge-large-en-v1.5-${{ runner.os }}
+          restore-keys: |
+            hf-bge-large-en-v1.5-
+
+      - name: Install ingestion dependencies
+        run: pip install -e ".[ingestion]"
+
+      - name: Run ingestion pipeline
+        env:
+          QDRANT_URL: http://localhost:6333
+          QDRANT_COLLECTION_NAME: docustream
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_ROOT_PAGE_ID: ${{ secrets.NOTION_ROOT_PAGE_ID }}
+          CONFLUENCE_URL: ${{ secrets.CONFLUENCE_URL }}
+          CONFLUENCE_USER_EMAIL: ${{ secrets.CONFLUENCE_USER_EMAIL }}
+          CONFLUENCE_TOKEN: ${{ secrets.CONFLUENCE_TOKEN }}
+          CONFLUENCE_SPACE_KEY: ${{ secrets.CONFLUENCE_SPACE_KEY }}
+          HF_HOME: /tmp/hf_cache
+          PDF_SOURCE_DIR: data/sources
+        run: |
+          python -m ingestion.pipeline --source ${{ github.event.inputs.source_type || 'all' }}
+
+      - name: Save HuggingFace model cache
+        if: always()
+        uses: actions/cache@v4
+        with:
+          path: /tmp/hf_cache
+          key: hf-bge-large-en-v1.5-${{ runner.os }}

@@ -1,0 +1,26 @@
+embedding:
+  model_name: "BAAI/bge-large-en-v1.5"
+  device: "cpu"          # change to "cuda" if GPU is available
+  batch_size: 32
+  query_prefix: "Represent this sentence for searching relevant passages: "
+
+chunking:
+  chunk_size: 800        # measured in tokens (cl100k_base)
+  chunk_overlap: 150
+  separators: ["\n\n", "\n", ". ", " ", ""]
+
+qdrant:
+  collection_name: "docustream"
+  vector_size: 1024
+  distance: "Cosine"
+  on_disk_payload: true
+
+retrieval:
+  top_k: 6
+  score_threshold: 0.35
+
+llm:
+  model: "gpt-4o-mini"
+  temperature: 0.0
+  max_tokens: 2048
+  streaming: true

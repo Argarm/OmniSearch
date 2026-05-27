@@ -1,0 +1,88 @@
+version: "3.9"
+
+# DocuStream full-stack compose.
+# Only the frontend (port 8501) is exposed to the host.
+# Backend and Qdrant communicate exclusively over the internal network.
+
+networks:
+  docustream_net:
+    driver: bridge
+
+volumes:
+  qdrant_data:
+  hf_model_cache:
+
+services:
+  # ── Vector database ──────────────────────────────────────────────────────────
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: unless-stopped
+    networks: [docustream_net]
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:6333/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Qdrant is NOT exposed to the host — backend accesses it via internal network
+
+  # ── Query backend ─────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    restart: unless-stopped
+    networks: [docustream_net]
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    volumes:
+      - hf_model_cache:/app/.cache/huggingface
+    env_file: .env
+    environment:
+      QDRANT_URL: http://qdrant:6333
+      BACKEND_HOST: 0.0.0.0
+      BACKEND_PORT: "8000"
+      CORS_ORIGINS: "http://localhost:8501,http://frontend:8501"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    # Backend is NOT exposed to the host
+
+  # ── Chat frontend ─────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    restart: unless-stopped
+    networks: [docustream_net]
+    depends_on:
+      backend:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      BACKEND_URL: http://backend:8000
+    ports:
+      - "8501:8501"     # Only this port is exposed to the host
+
+  # ── Ingestion pipeline (run-once, triggered manually or via GitHub Actions) ──
+  ingestion:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.ingestion
+    restart: "no"       # Exits after completing the pipeline run
+    networks: [docustream_net]
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    volumes:
+      - hf_model_cache:/app/.cache/huggingface
+      - ./data/sources:/app/data/sources:ro
+    env_file: .env
+    environment:
+      QDRANT_URL: http://qdrant:6333
+    profiles:
+      - ingestion        # Only started with: docker compose --profile ingestion up ingestion
