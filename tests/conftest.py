@@ -1,4 +1,4 @@
-"""Shared pytest fixtures for DocuStream tests."""
+"""Shared pytest fixtures for OmniSearch tests."""
 from __future__ import annotations
 
 from pathlib import Path

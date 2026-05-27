@@ -1,4 +1,4 @@
-"""DocuStream Chainlit frontend.
+"""OmniSearch Chainlit frontend.
 
 Run with:
     chainlit run frontend/app.py --port 8501
@@ -22,8 +22,8 @@ async def on_chat_start():
     """Initialize session state when a new conversation starts."""
     cl.user_session.set("history", [])
     await cl.Message(
-        content="Hello! I'm DocuStream, your internal knowledge base assistant. What would you like to know?",
-        author="DocuStream",
+        content="Hello! I'm OmniSearch, your internal knowledge base assistant. What would you like to know?",
+        author="OmniSearch",
     ).send()
 
 
@@ -33,7 +33,7 @@ async def on_message(message: cl.Message):
     history: list[dict] = cl.user_session.get("history", [])
 
     # Start the response message (will be streamed into)
-    response_msg = cl.Message(content="", author="DocuStream")
+    response_msg = cl.Message(content="", author="OmniSearch")
     await response_msg.send()
 
     sources: list[dict] = []

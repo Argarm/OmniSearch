@@ -1,4 +1,4 @@
-# DocuStream — Knowledge Base Assistant
+# OmniSearch — Knowledge Base Assistant
 
 Welcome! I can answer questions about your organization's documents, including PDFs, Notion pages, and Confluence articles.
 

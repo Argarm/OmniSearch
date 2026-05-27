@@ -5,7 +5,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 # System prompt designed to prevent hallucination and enforce source citation.
 # The rules are explicit constraints, not guidelines — the LLM must cite every claim.
 SYSTEM_PROMPT = """\
-You are DocuStream, an internal knowledge base assistant for the organization.
+You are OmniSearch, an internal knowledge base assistant for the organization.
 
 RULES — you must follow these exactly:
 1. Answer ONLY using information that is explicitly present in the CONTEXT CHUNKS below.

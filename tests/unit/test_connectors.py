@@ -27,7 +27,7 @@ class TestPdfConnector:
         pdf_path = tmp_path / "test.pdf"
         doc = fitz.open()
         page = doc.new_page()
-        page.insert_text((50, 50), "Hello world test content for DocuStream.")
+        page.insert_text((50, 50), "Hello world test content for OmniSearch.")
         doc.save(str(pdf_path))
         doc.close()
 

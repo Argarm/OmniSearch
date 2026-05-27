@@ -11,7 +11,7 @@ import pytest
 from langchain_core.documents import Document
 
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
-TEST_COLLECTION = "docustream_test"
+TEST_COLLECTION = "omnisearch_test"
 
 
 @pytest.fixture(scope="module")

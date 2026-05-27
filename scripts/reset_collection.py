@@ -11,7 +11,7 @@ import os
 import sys
 
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
-COLLECTION = os.getenv("QDRANT_COLLECTION_NAME", "docustream")
+COLLECTION = os.getenv("QDRANT_COLLECTION_NAME", "omnisearch")
 
 
 def main() -> None:

@@ -40,7 +40,7 @@ class QdrantSettings(BaseSettings):
 
     url: str = "http://localhost:6333"
     api_key: str = ""
-    collection_name: str = "docustream"
+    collection_name: str = "omnisearch"
     vector_size: int = 1024
     distance: str = "Cosine"
     on_disk_payload: bool = True

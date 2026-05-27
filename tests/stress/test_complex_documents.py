@@ -14,7 +14,7 @@ from pathlib import Path
 import pytest
 
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
-TEST_COLLECTION = "docustream_stress_test"
+TEST_COLLECTION = "omnisearch_stress_test"
 
 pytestmark = pytest.mark.skipif(
     not os.getenv("RUN_STRESS_TESTS"),

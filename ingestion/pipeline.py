@@ -1,4 +1,4 @@
-"""DocuStream ingestion pipeline entry point.
+"""OmniSearch ingestion pipeline entry point.
 
 Usage:
     python -m ingestion.pipeline --source all
@@ -67,7 +67,7 @@ def run_pipeline(
     # Configuration from env with argument overrides
     qdrant_url = qdrant_url or os.getenv("QDRANT_URL", "http://localhost:6333")
     qdrant_api_key = qdrant_api_key or os.getenv("QDRANT_API_KEY", "")
-    collection_name = collection_name or os.getenv("QDRANT_COLLECTION_NAME", "docustream")
+    collection_name = collection_name or os.getenv("QDRANT_COLLECTION_NAME", "omnisearch")
 
     chunk_size = int(os.getenv("CHUNKING_CHUNK_SIZE", "800"))
     chunk_overlap = int(os.getenv("CHUNKING_CHUNK_OVERLAP", "150"))
@@ -112,7 +112,7 @@ def run_pipeline(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="DocuStream ingestion pipeline")
+    parser = argparse.ArgumentParser(description="OmniSearch ingestion pipeline")
     parser.add_argument(
         "--source",
         choices=["all", "pdf", "notion", "confluence"],

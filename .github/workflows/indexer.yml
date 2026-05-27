@@ -1,4 +1,4 @@
-name: DocuStream Indexer
+name: OmniSearch Indexer
 
 on:
   schedule:
@@ -54,7 +54,7 @@ jobs:
       - name: Run ingestion pipeline
         env:
           QDRANT_URL: http://localhost:6333
-          QDRANT_COLLECTION_NAME: docustream
+          QDRANT_COLLECTION_NAME: omnisearch
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_ROOT_PAGE_ID: ${{ secrets.NOTION_ROOT_PAGE_ID }}
           CONFLUENCE_URL: ${{ secrets.CONFLUENCE_URL }}

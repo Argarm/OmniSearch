@@ -1,11 +1,11 @@
 version: "3.9"
 
-# DocuStream full-stack compose.
+# OmniSearch full-stack compose.
 # Only the frontend (port 8501) is exposed to the host.
 # Backend and Qdrant communicate exclusively over the internal network.
 
 networks:
-  docustream_net:
+  omnisearch_net:
     driver: bridge
 
 volumes:
@@ -17,7 +17,7 @@ services:
   qdrant:
     image: qdrant/qdrant:latest
     restart: unless-stopped
-    networks: [docustream_net]
+    networks: [omnisearch_net]
     volumes:
       - qdrant_data:/qdrant/storage
     healthcheck:
@@ -33,7 +33,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile.backend
     restart: unless-stopped
-    networks: [docustream_net]
+    networks: [omnisearch_net]
     depends_on:
       qdrant:
         condition: service_healthy
@@ -58,7 +58,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile.frontend
     restart: unless-stopped
-    networks: [docustream_net]
+    networks: [omnisearch_net]
     depends_on:
       backend:
         condition: service_healthy
@@ -74,7 +74,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile.ingestion
     restart: "no"       # Exits after completing the pipeline run
-    networks: [docustream_net]
+    networks: [omnisearch_net]
     depends_on:
       qdrant:
         condition: service_healthy

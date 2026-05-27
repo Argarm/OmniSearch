@@ -1,4 +1,4 @@
-# DocuStream
+# OmniSearch
 
 Internal RAG (Retrieval-Augmented Generation) system for organizational knowledge bases.
 
@@ -64,7 +64,7 @@ GitHub Actions (indexer.yml)
         └── vector_store.py (Qdrant upsert, idempotent)
               │
               ▼ (persisted vectors)
-         Qdrant collection "docustream"
+         Qdrant collection "omnisearch"
               │
               ▼ (at query time)
          backend/main.py (FastAPI)

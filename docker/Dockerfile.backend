@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
 # ── Runtime stage ──────────────────────────────────────────────────────────────
 FROM python:3.11-slim AS runtime
 
-RUN groupadd -r docustream && useradd -r -g docustream docustream
+RUN groupadd -r omnisearch && useradd -r -g omnisearch omnisearch
 
 WORKDIR /app
 
@@ -20,8 +20,8 @@ COPY ingestion/ ./ingestion/
 COPY config/ ./config/
 COPY pyproject.toml .
 
-RUN chown -R docustream:docustream /app
-USER docustream
+RUN chown -R omnisearch:omnisearch /app
+USER omnisearch
 
 ENV HF_HOME=/app/.cache/huggingface
 ENV PYTHONPATH=/app

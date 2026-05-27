@@ -16,7 +16,7 @@ class DocumentMetadata(TypedDict, total=False):
 
 
 class BaseConnector(ABC):
-    """Abstract base for all DocuStream data source connectors.
+    """Abstract base for all OmniSearch data source connectors.
 
     Every connector returns a list of LangChain Documents with standardized
     metadata so downstream chunking and upsert logic stays source-agnostic.

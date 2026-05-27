@@ -37,16 +37,16 @@ async def lifespan(app: FastAPI):
         max_tokens=settings.llm.max_tokens,
     )
 
-    print("[DocuStream] Backend ready.")
+    print("[OmniSearch] Backend ready.")
     yield
-    print("[DocuStream] Backend shutting down.")
+    print("[OmniSearch] Backend shutting down.")
 
 
 def create_app() -> FastAPI:
     settings = get_settings()
 
     app = FastAPI(
-        title="DocuStream API",
+        title="OmniSearch API",
         description="RAG query backend for internal knowledge bases",
         version="0.1.0",
         lifespan=lifespan,

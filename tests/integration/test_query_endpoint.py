@@ -89,7 +89,7 @@ def test_streaming_query_returns_sse_events(test_app):
 
 def test_health_endpoint(test_app):
     test_app.state.rag_chain.retriever = MagicMock()
-    test_app.state.rag_chain.retriever.collection_name = "docustream"
+    test_app.state.rag_chain.retriever.collection_name = "omnisearch"
     test_app.state.rag_chain.retriever.client.get_collection.side_effect = Exception("no qdrant")
 
     with TestClient(test_app) as client:

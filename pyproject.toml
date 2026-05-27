@@ -3,9 +3,9 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.backends.legacy:build"
 
 [project]
-name = "docustream"
+name = "omnisearch"
 version = "0.1.0"
-description = "Internal RAG system for organizational knowledge bases"
+description = "OmniSearch — Internal RAG system for organizational knowledge bases"
 requires-python = ">=3.11"
 dependencies = [
     "pydantic>=2.7",

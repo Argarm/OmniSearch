@@ -16,7 +16,7 @@ def _deterministic_uuid(source: str, chunk_index: int) -> str:
 
 
 class VectorStore:
-    """Manages the Qdrant collection for DocuStream.
+    """Manages the Qdrant collection for OmniSearch.
 
     Uses deterministic point IDs so re-ingesting the same document overwrites
     existing vectors rather than duplicating them (idempotent upserts).
@@ -26,7 +26,7 @@ class VectorStore:
         self,
         url: str = "http://localhost:6333",
         api_key: str = "",
-        collection_name: str = "docustream",
+        collection_name: str = "omnisearch",
         vector_size: int = 1024,
         distance: str = "Cosine",
         on_disk_payload: bool = True,

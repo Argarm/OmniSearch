@@ -1,4 +1,4 @@
-# DocuStream — Próximos Pasos
+# OmniSearch — Próximos Pasos
 
 Guía para retomar el desarrollo desde donde lo dejamos. Sigue los pasos en orden.
 
@@ -17,10 +17,10 @@ Guía para retomar el desarrollo desde donde lo dejamos. Sigue los pasos en orde
 
 ```bash
 # Crear el repo en GitHub (sin inicializar — ya tenemos commits locales)
-# En github.com: New repository → nombre: "docustream" → Create (sin README, sin .gitignore)
+# En github.com: New repository → nombre: "omnisearch" → Create (sin README, sin .gitignore)
 
 # Luego en la terminal:
-git remote add origin https://github.com/<tu-usuario>/docustream.git
+git remote add origin https://github.com/<tu-usuario>/omnisearch.git
 git branch -M main
 git push -u origin main
 ```
@@ -150,7 +150,7 @@ RUN_STRESS_TESTS=1 pytest tests/stress/ -v
 ## PASO 7 — Activar y verificar el CI/CD automático
 
 1. Hacer un push a `main` → verifica que el workflow `ci.yml` pase en GitHub Actions
-2. Ir a Actions → `DocuStream Indexer` → `Run workflow` → ejecutar manualmente con `source: pdf`
+2. Ir a Actions → `OmniSearch Indexer` → `Run workflow` → ejecutar manualmente con `source: pdf`
 3. Confirmar que el workflow termina sin errores y los vectores están en Qdrant
 
 Para que la indexación nightly funcione en producción, el workflow necesita apuntar a tu instancia de Qdrant persistente:
@@ -225,8 +225,8 @@ Cuando el sistema esté validado localmente:
 
 ```bash
 # En el servidor, clonar el repo y arrancar:
-git clone https://github.com/<tu-usuario>/docustream.git
-cd docustream
+git clone https://github.com/<tu-usuario>/omnisearch.git
+cd omnisearch
 cp .env.example .env && nano .env   # Configurar credenciales
 docker compose up -d --build
 ```
