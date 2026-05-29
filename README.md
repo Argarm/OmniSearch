@@ -1,5 +1,7 @@
 # OmniSearch
 
+![CI](https://github.com/Argarm/OmniSearch/actions/workflows/ci.yml/badge.svg) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
+
 Internal RAG (Retrieval-Augmented Generation) system for organizational knowledge bases.
 
 ## Stack
@@ -9,7 +11,7 @@ Internal RAG (Retrieval-Augmented Generation) system for organizational knowledg
 | Vector DB | Qdrant (self-hosted, Docker) |
 | Embeddings | `BAAI/bge-large-en-v1.5` (HuggingFace) |
 | Orchestration | LangChain + LCEL |
-| LLM | OpenAI-compatible (default: `gpt-4o-mini`) |
+| LLM | OpenAI (default: `gpt-4o-mini`) · Anthropic Claude (`claude-3-5-haiku`) — swappable via `LLM_PROVIDER` env var |
 | Backend | FastAPI + SSE streaming |
 | Frontend | Chainlit |
 | CI/CD | GitHub Actions |
@@ -55,28 +57,20 @@ pytest tests/integration/ -v   # Requires Qdrant running
 
 ## Architecture
 
-```
-GitHub Actions (indexer.yml)
-  └── ingestion/pipeline.py
-        ├── connectors/ (PDF, Notion, Confluence)
-        ├── chunker.py  (RecursiveCharacterTextSplitter, token-based)
-        ├── embedder.py (BAAI/bge-large-en-v1.5, BGE asymmetric)
-        └── vector_store.py (Qdrant upsert, idempotent)
-              │
-              ▼ (persisted vectors)
-         Qdrant collection "omnisearch"
-              │
-              ▼ (at query time)
-         backend/main.py (FastAPI)
-           └── /api/v1/query
-                 ├── retriever.py  (cosine similarity search)
-                 ├── chain.py      (LCEL: retrieve → prompt → LLM)
-                 └── SSE streaming
-                       │
-                       ▼
-               frontend/app.py (Chainlit)
-                 ├── Streaming token display
-                 └── Source document panel
+```mermaid
+flowchart TD
+    GHA["GitHub Actions\n(indexer.yml)"] --> Pipeline["ingestion/pipeline.py"]
+    Pipeline --> Conn["connectors/\nPDF · Notion · Confluence"]
+    Pipeline --> Chunker["chunker.py"]
+    Pipeline --> Embedder["embedder.py"]
+    Pipeline --> VS["vector_store.py"]
+    VS --> Qdrant[("Qdrant collection\nomnisearch")]
+    Qdrant --> Main["backend/main.py\nFastAPI"]
+    Main --> Query["/api/v1/query"]
+    Query --> Ret["retriever.py"]
+    Query --> Chain["chain.py"]
+    Query --> SSE["SSE streaming"]
+    SSE --> Frontend["frontend/app.py\nChainlit"]
 ```
 
 ## Data Sources
@@ -107,3 +101,11 @@ The indexer runs automatically:
 # Place complex PDFs in tests/stress/fixtures/ then:
 RUN_STRESS_TESTS=1 pytest tests/stress/ -v
 ```
+
+## ADR — Why This Stack
+
+**BGE embeddings over OpenAI embeddings** — self-hosted, no per-token cost, strong multilingual performance for organizational knowledge bases.
+
+**Qdrant over pgvector** — purpose-built vector DB with filtering, payload indexing, and horizontal scaling; pgvector is adequate for small workloads but operationally simpler to replace than retrofit.
+
+**Chainlit over a custom frontend** — ships streaming, source citation UI, and auth out of the box; building equivalent features from scratch would cost 2–3 weeks with no differentiated value.
