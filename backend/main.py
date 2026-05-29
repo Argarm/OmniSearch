@@ -28,14 +28,7 @@ async def lifespan(app: FastAPI):
         score_threshold=settings.retrieval.score_threshold,
     )
 
-    app.state.rag_chain = RAGChain(
-        retriever=retriever,
-        openai_api_key=settings.openai_api_key,
-        openai_base_url=settings.openai_base_url,
-        model=settings.openai_model,
-        temperature=settings.llm.temperature,
-        max_tokens=settings.llm.max_tokens,
-    )
+    app.state.rag_chain = RAGChain(retriever=retriever)
 
     print("[OmniSearch] Backend ready.")
     yield

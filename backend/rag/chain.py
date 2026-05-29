@@ -5,8 +5,8 @@ from typing import AsyncIterator
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-from langchain_openai import ChatOpenAI
 
+from backend.llm_factory import get_llm
 from backend.models.schemas import Message, SourceDocument
 from backend.rag.prompts import RAG_PROMPT, REWRITE_PROMPT, format_context
 from backend.rag.retriever import Retriever
@@ -33,24 +33,9 @@ class RAGChain:
     4. Stream tokens back to the caller; send source documents as a final event.
     """
 
-    def __init__(
-        self,
-        retriever: Retriever,
-        openai_api_key: str,
-        openai_base_url: str,
-        model: str = "gpt-4o-mini",
-        temperature: float = 0.0,
-        max_tokens: int = 2048,
-    ) -> None:
+    def __init__(self, retriever: Retriever) -> None:
         self.retriever = retriever
-        self._llm = ChatOpenAI(
-            model=model,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            streaming=True,
-            api_key=openai_api_key,
-            base_url=openai_base_url,
-        )
+        self._llm = get_llm()
 
     async def _rewrite_query(
         self, query: str, history: list[Message]
