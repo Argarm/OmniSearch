@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 from langchain_core.documents import Document
@@ -71,6 +70,6 @@ class PdfConnector(BaseConnector):
 
     @staticmethod
     def _iso_mtime(ts: float) -> str:
-        from datetime import datetime, timezone
+        from datetime import UTC, datetime
 
-        return datetime.fromtimestamp(ts, tz=timezone.utc).isoformat()
+        return datetime.fromtimestamp(ts, tz=UTC).isoformat()

@@ -18,7 +18,7 @@ def build_splitter(
         separators = ["\n\n", "\n", ". ", " ", ""]
 
     return RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-        model_name="cl100k_base",
+        encoding_name="cl100k_base",
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
         separators=separators,

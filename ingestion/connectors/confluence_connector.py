@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from langchain_core.documents import Document
 
@@ -89,7 +89,7 @@ class ConfluenceConnector(BaseConnector):
         last_modified = (
             page.get("history", {})
             .get("lastUpdated", {})
-            .get("when", datetime.now(timezone.utc).isoformat())
+            .get("when", datetime.now(UTC).isoformat())
         )
 
         return Document(

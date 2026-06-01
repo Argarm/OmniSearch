@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import json
 import uuid
-from typing import AsyncIterator
+from collections.abc import AsyncIterator
 
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
-from backend.models.schemas import QueryRequest, QueryResponse, SourceDocument
+from backend.models.schemas import QueryRequest, QueryResponse
 
 router = APIRouter()
 

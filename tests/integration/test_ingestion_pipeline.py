@@ -8,7 +8,6 @@ from __future__ import annotations
 import os
 
 import pytest
-from langchain_core.documents import Document
 
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 TEST_COLLECTION = "omnisearch_test"

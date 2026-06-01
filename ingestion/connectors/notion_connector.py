@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from langchain_core.documents import Document
 
@@ -103,7 +103,7 @@ class NotionConnector(BaseConnector):
         props = block.get("properties", {})
         title = self._extract_title_from_properties(props) or block_id
         url = block.get("url", f"https://notion.so/{block_id.replace('-', '')}")
-        last_edited = block.get("last_edited_time", datetime.now(timezone.utc).isoformat())
+        last_edited = block.get("last_edited_time", datetime.now(UTC).isoformat())
 
         text_parts: list[str] = []
         for child in self._paginate_children(block_id):

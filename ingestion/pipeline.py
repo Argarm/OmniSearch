@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import argparse
 import os
-import sys
 from pathlib import Path
 
 from langchain_core.documents import Document
@@ -46,7 +45,12 @@ def _load_documents(source_type: str) -> list[Document]:
             print("[Pipeline] NOTION_TOKEN or NOTION_ROOT_PAGE_ID not set — skipping")
 
     if source_type in ("confluence", "all"):
-        required = ["CONFLUENCE_URL", "CONFLUENCE_USER_EMAIL", "CONFLUENCE_TOKEN", "CONFLUENCE_SPACE_KEY"]
+        required = [
+            "CONFLUENCE_URL",
+            "CONFLUENCE_USER_EMAIL",
+            "CONFLUENCE_TOKEN",
+            "CONFLUENCE_SPACE_KEY",
+        ]
         if all(os.getenv(k) for k in required):
             print("[Pipeline] Loading Confluence pages")
             docs = ConfluenceConnector().load()

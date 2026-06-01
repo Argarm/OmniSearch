@@ -12,7 +12,10 @@ from langchain_core.documents import Document
 def sample_documents() -> list[Document]:
     return [
         Document(
-            page_content="The 2024 annual budget is $4.2 million. This includes R&D costs of $1.5M.",
+            page_content=(
+                "The 2024 annual budget is $4.2 million. "
+                "This includes R&D costs of $1.5M."
+            ),
             metadata={
                 "source": "/data/budget_2024.pdf",
                 "source_type": "pdf",
@@ -23,7 +26,9 @@ def sample_documents() -> list[Document]:
             },
         ),
         Document(
-            page_content="Engineering onboarding takes 4 weeks and includes a buddy system pairing.",
+            page_content=(
+                "Engineering onboarding takes 4 weeks and includes a buddy system pairing."
+            ),
             metadata={
                 "source": "abc123",
                 "source_type": "notion",

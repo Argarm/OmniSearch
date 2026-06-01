@@ -46,11 +46,6 @@ jobs:
         image: qdrant/qdrant:latest
         ports:
           - 6333:6333
-        options: >-
-          --health-cmd "curl -sf http://localhost:6333/healthz"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 10
 
     steps:
       - uses: actions/checkout@v4
@@ -64,6 +59,20 @@ jobs:
           key: hf-bge-large-en-v1.5-${{ runner.os }}
       - name: Install all dependencies
         run: pip install -e ".[ingestion,backend,dev]"
+      # The qdrant image ships without curl/wget, so a container-level
+      # healthcheck can't run. Poll readiness from the runner host instead.
+      - name: Wait for Qdrant
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:6333/healthz; then
+              echo "Qdrant is ready"
+              exit 0
+            fi
+            echo "Waiting for Qdrant... ($i/30)"
+            sleep 2
+          done
+          echo "Qdrant did not become ready in time"
+          exit 1
       - name: Run integration tests
         env:
           QDRANT_URL: http://localhost:6333

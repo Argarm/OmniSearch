@@ -1,11 +1,10 @@
 """Integration tests for the FastAPI /query endpoint."""
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from fastapi.testclient import TestClient
-from httpx import AsyncClient
 
 from backend.main import create_app
 from backend.models.schemas import SourceDocument
@@ -82,9 +81,11 @@ def test_streaming_query_returns_sse_events(test_app):
             assert "text/event-stream" in resp.headers["content-type"]
             lines = list(resp.iter_lines())
 
-    data_lines = [l for l in lines if l.startswith("data: ")]
-    assert any("[SOURCES]" in l for l in data_lines), "SSE stream must include a [SOURCES] event"
-    assert any("[DONE]" in l for l in data_lines), "SSE stream must end with [DONE]"
+    data_lines = [line for line in lines if line.startswith("data: ")]
+    assert any(
+        "[SOURCES]" in line for line in data_lines
+    ), "SSE stream must include a [SOURCES] event"
+    assert any("[DONE]" in line for line in data_lines), "SSE stream must end with [DONE]"
 
 
 def test_health_endpoint(test_app):

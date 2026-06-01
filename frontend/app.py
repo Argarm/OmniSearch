@@ -22,7 +22,10 @@ async def on_chat_start():
     """Initialize session state when a new conversation starts."""
     cl.user_session.set("history", [])
     await cl.Message(
-        content="Hello! I'm OmniSearch, your internal knowledge base assistant. What would you like to know?",
+        content=(
+            "Hello! I'm OmniSearch, your internal knowledge base assistant. "
+            "What would you like to know?"
+        ),
         author="OmniSearch",
     ).send()
 
