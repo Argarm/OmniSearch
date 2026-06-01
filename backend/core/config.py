@@ -11,7 +11,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 def _load_yaml(path: str | None = None) -> dict[str, Any]:
-    settings_path = Path(path or os.getenv("SETTINGS_PATH", "config/settings.yaml"))
+    settings_path = Path(path or os.getenv("SETTINGS_PATH") or "config/settings.yaml")
     if settings_path.exists():
         with settings_path.open() as f:
             return yaml.safe_load(f) or {}

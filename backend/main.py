@@ -15,20 +15,22 @@ from backend.routers.query import router as query_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize expensive resources once at startup and clean up on shutdown."""
-    settings = get_settings()
+    # Respect a pre-injected chain (e.g. a test mock); only build the real one otherwise.
+    if getattr(app.state, "rag_chain", None) is None:
+        settings = get_settings()
 
-    retriever = Retriever(
-        qdrant_url=settings.qdrant.url,
-        qdrant_api_key=settings.qdrant.api_key,
-        collection_name=settings.qdrant.collection_name,
-        embed_model=settings.embedding.model_name,
-        embed_device=settings.embedding.device,
-        query_prefix=settings.embedding.query_prefix,
-        top_k=settings.retrieval.top_k,
-        score_threshold=settings.retrieval.score_threshold,
-    )
+        retriever = Retriever(
+            qdrant_url=settings.qdrant.url,
+            qdrant_api_key=settings.qdrant.api_key,
+            collection_name=settings.qdrant.collection_name,
+            embed_model=settings.embedding.model_name,
+            embed_device=settings.embedding.device,
+            query_prefix=settings.embedding.query_prefix,
+            top_k=settings.retrieval.top_k,
+            score_threshold=settings.retrieval.score_threshold,
+        )
 
-    app.state.rag_chain = RAGChain(retriever=retriever)
+        app.state.rag_chain = RAGChain(retriever=retriever)
 
     print("[OmniSearch] Backend ready.")
     yield
@@ -64,7 +66,7 @@ def create_app() -> FastAPI:
             )
             collection_info = {
                 "name": chain.retriever.collection_name,
-                "vectors_count": info.vectors_count,
+                "vectors_count": info.points_count,
                 "status": str(info.status),
             }
             return HealthResponse(status="ok", collection=collection_info)

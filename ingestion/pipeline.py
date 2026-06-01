@@ -69,9 +69,9 @@ def run_pipeline(
     collection_name: str | None = None,
 ) -> None:
     # Configuration from env with argument overrides
-    qdrant_url = qdrant_url or os.getenv("QDRANT_URL", "http://localhost:6333")
-    qdrant_api_key = qdrant_api_key or os.getenv("QDRANT_API_KEY", "")
-    collection_name = collection_name or os.getenv("QDRANT_COLLECTION_NAME", "omnisearch")
+    url: str = qdrant_url or os.getenv("QDRANT_URL") or "http://localhost:6333"
+    api_key: str = qdrant_api_key or os.getenv("QDRANT_API_KEY") or ""
+    collection: str = collection_name or os.getenv("QDRANT_COLLECTION_NAME") or "omnisearch"
 
     chunk_size = int(os.getenv("CHUNKING_CHUNK_SIZE", "800"))
     chunk_overlap = int(os.getenv("CHUNKING_CHUNK_OVERLAP", "150"))
@@ -103,9 +103,9 @@ def run_pipeline(
 
     # 4. Upsert
     store = VectorStore(
-        url=qdrant_url,
-        api_key=qdrant_api_key,
-        collection_name=collection_name,
+        url=url,
+        api_key=api_key,
+        collection_name=collection,
     )
     store.ensure_collection()
     store.upsert_chunks(chunks, embeddings)

@@ -49,7 +49,7 @@ def test_ensure_collection_creates_it(vector_store):
     from qdrant_client.http.models import CollectionStatus
 
     info = vector_store.client.get_collection(TEST_COLLECTION)
-    assert info.status == CollectionStatus.GREEN or info.vectors_count >= 0
+    assert info.status == CollectionStatus.GREEN or info.points_count >= 0
 
 
 def test_upsert_and_count(vector_store, embedder, sample_documents):
@@ -61,8 +61,8 @@ def test_upsert_and_count(vector_store, embedder, sample_documents):
     vector_store.upsert_chunks(chunks, embeddings)
 
     info = vector_store.client.get_collection(TEST_COLLECTION)
-    assert info.vectors_count == len(chunks), (
-        f"Expected {len(chunks)} vectors, got {info.vectors_count}"
+    assert info.points_count == len(chunks), (
+        f"Expected {len(chunks)} vectors, got {info.points_count}"
     )
 
 
@@ -73,9 +73,9 @@ def test_upsert_is_idempotent(vector_store, embedder, sample_documents):
     chunks = split_documents(sample_documents, chunk_size=200, chunk_overlap=20)
     embeddings = embedder.embed_documents(chunks)
 
-    count_before = vector_store.client.get_collection(TEST_COLLECTION).vectors_count
+    count_before = vector_store.client.get_collection(TEST_COLLECTION).points_count
     vector_store.upsert_chunks(chunks, embeddings)
-    count_after = vector_store.client.get_collection(TEST_COLLECTION).vectors_count
+    count_after = vector_store.client.get_collection(TEST_COLLECTION).points_count
 
     assert count_before == count_after, "Re-ingesting same docs should not create duplicates"
 
